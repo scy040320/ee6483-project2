@@ -1,0 +1,21 @@
+# Python and local environment
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+.env.*
+.DS_Store
+# Local data and experiment outputs
+data/raw/
+data/cifar-10*/
+runs/
+*.pt
+*.pth
+*.ckpt
+*.zip
+*.tar
+*.gz
+# Temporary document files
+~$*
+.~*
