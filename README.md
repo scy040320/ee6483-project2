@@ -14,7 +14,7 @@ python -m venv .venv
 
 在 VS Code 选择 `.venv/Scripts/python.exe` 作为解释器。以下是 Windows PowerShell 命令。
 
-NVIDIA GPU：使用与设备和驱动兼容的 CUDA 构建。A 已验证的 CUDA 13.0 环境：
+NVIDIA GPU：使用与设备和驱动兼容的 CUDA 构建。已验证的 CUDA 13.0 环境：
 
 ```powershell
 .\.venv\Scripts\python.exe -m pip install torch==2.14.1 torchvision==0.29.1 --index-url https://download.pytorch.org/whl/cu130
@@ -28,7 +28,7 @@ NVIDIA GPU：使用与设备和驱动兼容的 CUDA 构建。A 已验证的 CUDA
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
 ```
 
-`requirements-lock.txt` 记录 A 已运行成功的完整 CUDA 13.0 环境。需要匹配该环境时：
+`requirements-lock.txt` 记录我已运行成功的完整 CUDA 13.0 环境。需要匹配该环境时：
 
 ```powershell
 .\.venv\Scripts\python.exe -m pip install -r requirements-lock.txt --extra-index-url https://download.pytorch.org/whl/cu130
