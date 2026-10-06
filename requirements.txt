@@ -1,0 +1,8 @@
+# Install matching torch/torchvision wheels for your CPU or CUDA first.
+# Exact versions should be shared after the first successful local run.
+torch>=2.2
+torchvision>=0.17
+numpy>=1.26
+Pillow>=10.0
+matplotlib>=3.8
+tqdm>=4.66
