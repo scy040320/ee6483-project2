@@ -12,42 +12,39 @@ from src.engine import train_one_epoch, evaluate
 
 def get_imbalanced_indices(subset_indices, all_targets, num_classes=10, imb_ratio=0.01):
     """
-    Creates a long-tail imbalanced distribution by truncating indices.
+    Creates a long-tail imbalanced distribution and returns indices along with class counts.
     """
-    # Group indices by class using a dictionary
     class_indices = {i: [] for i in range(num_classes)}
     for idx in subset_indices:
         label = all_targets[idx]
         class_indices[label].append(idx)
         
-    # Find the maximum number of samples in any class
     max_samples = max([len(indices) for indices in class_indices.values()])
     
     imbalanced_indices = []
-    distribution = {}
+    class_counts = []
     
-    # Calculate target counts using exponential decay and slice arrays
     for c in range(num_classes):
         ratio = imb_ratio ** (c / (num_classes - 1.0))
-        target_count = max(1, int(max_samples * ratio)) # Ensure at least 1 sample
+        target_count = max(1, int(max_samples * ratio))
         
         truncated = class_indices[c][:target_count]
         imbalanced_indices.extend(truncated)
-        distribution[c] = len(truncated)
+        class_counts.append(len(truncated))
         
     print("\n--- Imbalanced Training Data Distribution ---")
-    for c, count in distribution.items():
+    for c, count in enumerate(class_counts):
         print(f"Class {c}: {count} samples")
     print("---------------------------------------------\n")
         
-    return imbalanced_indices
+    return imbalanced_indices, class_counts
 
 def main():
     set_seed(42)
     device = resolve_device("auto")
     
-    # Update output directory for the imbalanced experiment
-    output_dir = "runs/cifar10_imbalanced"
+    # Update output directory for the weighted loss experiment
+    output_dir = "runs/cifar10_weighted_loss"
     os.makedirs(output_dir, exist_ok=True)
     print(f"Using device: {device}. Results will be saved to: {output_dir}")
 
@@ -67,32 +64,43 @@ def main():
         range(len(full_train_dataset)), [train_size, val_size], generator=generator
     )
     
-    # Apply imbalance logic to the training indices
-    # We set imb_ratio=0.01 (Class 9 will have 100x fewer samples than Class 0)
-    imb_train_indices = get_imbalanced_indices(
+    # Get imbalanced indices and the count of samples per class
+    imb_train_indices, class_counts = get_imbalanced_indices(
         subset_indices=train_indices, 
         all_targets=full_train_dataset.targets, 
         num_classes=10, 
         imb_ratio=0.01
     )
     
-    # Extract subsets using the new truncated indices
     train_dataset = Subset(full_train_dataset, imb_train_indices)
     val_dataset = Subset(val_dataset_raw, val_indices)
 
-    # Wrap with DataLoader
     train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True, num_workers=0)
     val_loader = DataLoader(val_dataset, batch_size=64, shuffle=False, num_workers=0)
     test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False, num_workers=0)
 
     model = build_model(num_classes=10).to(device)
-    criterion = nn.CrossEntropyLoss()
+    
+    # ---------- Method A: Class-Weighted Loss ----------
+    # Calculate weights as inverse of class frequencies
+    weights = 1.0 / torch.tensor(class_counts, dtype=torch.float)
+    # Normalize weights so they sum up to num_classes
+    weights = weights / weights.sum() * 10.0
+    weights = weights.to(device)
+    
+    print("Computed Class Weights for CrossEntropyLoss:")
+    print(weights)
+    
+    # Pass the weights to the loss function
+    criterion = nn.CrossEntropyLoss(weight=weights)
+    # ---------------------------------------------------
+    
     optimizer = optim.Adam(model.parameters(), lr=1e-3)
 
     epochs = 10
     best_val_acc = 0.0
     
-    print(f"\n--- Starting imbalanced training for {epochs} epochs ---")
+    print(f"\n--- Starting weighted training for {epochs} epochs ---")
     for epoch in range(1, epochs + 1):
         print(f"\n[Epoch {epoch}/{epochs}]")
         
@@ -111,7 +119,7 @@ def main():
     print("\n--- Training finished. Evaluating best model on test set ---")
     model.load_state_dict(torch.load(os.path.join(output_dir, "best_model.pt")))
     test_metrics = evaluate(model, test_loader, criterion, device)
-    print(f"[Result] Final Test Accuracy (Imbalanced): {test_metrics['accuracy']:.4f}")
+    print(f"[Result] Final Test Accuracy (Weighted Loss): {test_metrics['accuracy']:.4f}")
 
 if __name__ == "__main__":
     main()
