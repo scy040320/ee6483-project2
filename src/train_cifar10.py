@@ -1,57 +1,86 @@
+import os
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.utils.data import DataLoader, random_split
+from torch.utils.data import DataLoader, random_split, Subset
 from torchvision.datasets import CIFAR10
 
-# 导入项目中可复用的模块
 from src.common import set_seed, resolve_device
 from src.data import build_transforms
 from src.models import build_model
 from src.engine import train_one_epoch, evaluate
 
 def main():
-    # 1. 基础设置：固定随机种子，自动获取设备 (GPU/CPU)
     set_seed(42)
     device = resolve_device("auto")
-    print(f"当前使用的设备: {device}")
+    
+    # Create output directory for this run
+    output_dir = "runs/cifar10_baseline"
+    os.makedirs(output_dir, exist_ok=True)
+    print(f"Using device: {device}. Results will be saved to: {output_dir}")
 
-    # 2. 准备数据
-    # CIFAR-10 图片默认尺寸较小，这里我们指定为 32x32，并应用同学A写好的预处理逻辑
+    # Training set needs augmentation, validation/test sets do not
     transform_train = build_transforms(image_size=32, augment=True)
+    transform_test = build_transforms(image_size=32, augment=False)
     
-    # 自动下载并加载 CIFAR-10 训练集
-    print("正在加载 CIFAR-10 数据集...")
+    # Download and load datasets
+    print("Loading CIFAR-10 dataset...")
     full_train_dataset = CIFAR10(root="data/raw", train=True, download=True, transform=transform_train)
+    test_dataset = CIFAR10(root="data/raw", train=False, download=True, transform=transform_test)
     
-    # 根据要求，你需要从训练集中划出一部分作为验证集用于调参
-    # CIFAR-10 训练集共 50000 张，这里我们分出 40000 张训练，10000 张验证
+    # Load again for validation set to apply test transforms (no augmentation)
+    val_dataset_raw = CIFAR10(root="data/raw", train=True, download=True, transform=transform_test)
+    
     train_size = 40000
     val_size = len(full_train_dataset) - train_size
-    train_dataset, val_dataset = random_split(full_train_dataset, [train_size, val_size])
+    
+    # Split indices
+    generator = torch.Generator().manual_seed(42)
+    train_indices, val_indices = random_split(
+        range(len(full_train_dataset)), [train_size, val_size], generator=generator
+    )
+    
+    # Extract subsets
+    train_dataset = Subset(full_train_dataset, train_indices)
+    val_dataset = Subset(val_dataset_raw, val_indices)
 
-    # 封装 DataLoader
+    # Wrap with DataLoader
     train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True, num_workers=0)
     val_loader = DataLoader(val_dataset, batch_size=64, shuffle=False, num_workers=0)
-    print(f"数据加载完成！训练批次: {len(train_loader)}，验证批次: {len(val_loader)}")
+    test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False, num_workers=0)
 
-    # 3. 构建模型、损失函数和优化器
-    # 你的任务是十分类，所以 num_classes 必须指定为 10
+    # Build model, criterion, and optimizer
     model = build_model(num_classes=10).to(device)
     criterion = nn.CrossEntropyLoss()
-    # 学习率随便设了一个初始值，之后调参时可以改
     optimizer = optim.Adam(model.parameters(), lr=1e-3)
 
-    # 4. 跑一轮训练作为测试
-    print("\n--- 开始训练一轮测试 ---")
-    train_metrics = train_one_epoch(model, train_loader, criterion, optimizer, device)
-    print(f"训练一轮的结果: {train_metrics}")
-
-    print("\n--- 开始验证测试 ---")
-    val_metrics = evaluate(model, val_loader, criterion, device)
-    print(f"验证的结果: {val_metrics}")
+    # ---------- Full Training Loop ----------
+    epochs = 10
+    best_val_acc = 0.0
     
-    print("\n恭喜！基础的 CIFAR-10 训练流程已成功跑通！")
+    print(f"\n--- Starting training for {epochs} epochs ---")
+    for epoch in range(1, epochs + 1):
+        print(f"\n[Epoch {epoch}/{epochs}]")
+        
+        # Train and evaluate
+        train_metrics = train_one_epoch(model, train_loader, criterion, optimizer, device)
+        val_metrics = evaluate(model, val_loader, criterion, device)
+        
+        print(f"Train -> Loss: {train_metrics['loss']:.4f}, Accuracy: {train_metrics['accuracy']:.4f}")
+        print(f"Val   -> Loss: {val_metrics['loss']:.4f}, Accuracy: {val_metrics['accuracy']:.4f}")
+        
+        # Save the best model based on validation accuracy
+        if val_metrics['accuracy'] > best_val_acc:
+            best_val_acc = val_metrics['accuracy']
+            save_path = os.path.join(output_dir, "best_model.pt")
+            torch.save(model.state_dict(), save_path)
+            print(f"[*] New best validation accuracy: {best_val_acc:.4f}. Model saved!")
+            
+    # ---------- Final Evaluation on Test Set ----------
+    print("\n--- Training finished. Evaluating best model on test set ---")
+    model.load_state_dict(torch.load(os.path.join(output_dir, "best_model.pt")))
+    test_metrics = evaluate(model, test_loader, criterion, device)
+    print(f"[Result] Final Test Accuracy (Baseline): {test_metrics['accuracy']:.4f}")
 
 if __name__ == "__main__":
     main()
