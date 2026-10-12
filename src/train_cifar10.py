@@ -2,7 +2,7 @@ import os
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.utils.data import DataLoader, random_split, Subset
+from torch.utils.data import DataLoader, random_split, Subset, WeightedRandomSampler
 from torchvision.datasets import CIFAR10
 
 from src.common import set_seed, resolve_device
@@ -43,8 +43,8 @@ def main():
     set_seed(42)
     device = resolve_device("auto")
     
-    # Update output directory for the weighted loss experiment
-    output_dir = "runs/cifar10_weighted_loss"
+    # Update output directory for the resampling experiment
+    output_dir = "runs/cifar10_resampling"
     os.makedirs(output_dir, exist_ok=True)
     print(f"Using device: {device}. Results will be saved to: {output_dir}")
 
@@ -64,7 +64,6 @@ def main():
         range(len(full_train_dataset)), [train_size, val_size], generator=generator
     )
     
-    # Get imbalanced indices and the count of samples per class
     imb_train_indices, class_counts = get_imbalanced_indices(
         subset_indices=train_indices, 
         all_targets=full_train_dataset.targets, 
@@ -75,32 +74,41 @@ def main():
     train_dataset = Subset(full_train_dataset, imb_train_indices)
     val_dataset = Subset(val_dataset_raw, val_indices)
 
-    train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True, num_workers=0)
+    # ---------- Method B: Data Resampling ----------
+    # 1. Calculate base weight for each class (inverse frequency)
+    class_weights = 1.0 / torch.tensor(class_counts, dtype=torch.float)
+    
+    # 2. Assign the corresponding weight to every individual sample in the subset
+    sample_weights = []
+    for idx in imb_train_indices:
+        label = full_train_dataset.targets[idx]
+        sample_weights.append(class_weights[label])
+        
+    # 3. Create the sampler (replacement=True allows oversampling the minority classes)
+    sampler = WeightedRandomSampler(
+        weights=sample_weights,
+        num_samples=len(sample_weights),
+        replacement=True
+    )
+    print("Configured WeightedRandomSampler for DataLoader.")
+    
+    # 4. Apply sampler to DataLoader. Note: shuffle must be False when using a custom sampler.
+    train_loader = DataLoader(train_dataset, batch_size=64, sampler=sampler, num_workers=0)
+    # -----------------------------------------------
+    
     val_loader = DataLoader(val_dataset, batch_size=64, shuffle=False, num_workers=0)
     test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False, num_workers=0)
 
     model = build_model(num_classes=10).to(device)
     
-    # ---------- Method A: Class-Weighted Loss ----------
-    # Calculate weights as inverse of class frequencies
-    weights = 1.0 / torch.tensor(class_counts, dtype=torch.float)
-    # Normalize weights so they sum up to num_classes
-    weights = weights / weights.sum() * 10.0
-    weights = weights.to(device)
-    
-    print("Computed Class Weights for CrossEntropyLoss:")
-    print(weights)
-    
-    # Pass the weights to the loss function
-    criterion = nn.CrossEntropyLoss(weight=weights)
-    # ---------------------------------------------------
-    
+    # Revert to standard CrossEntropyLoss for fair comparison
+    criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=1e-3)
 
     epochs = 10
     best_val_acc = 0.0
     
-    print(f"\n--- Starting weighted training for {epochs} epochs ---")
+    print(f"\n--- Starting resampling training for {epochs} epochs ---")
     for epoch in range(1, epochs + 1):
         print(f"\n[Epoch {epoch}/{epochs}]")
         
@@ -119,7 +127,7 @@ def main():
     print("\n--- Training finished. Evaluating best model on test set ---")
     model.load_state_dict(torch.load(os.path.join(output_dir, "best_model.pt")))
     test_metrics = evaluate(model, test_loader, criterion, device)
-    print(f"[Result] Final Test Accuracy (Weighted Loss): {test_metrics['accuracy']:.4f}")
+    print(f"[Result] Final Test Accuracy (Resampling): {test_metrics['accuracy']:.4f}")
 
 if __name__ == "__main__":
     main()
