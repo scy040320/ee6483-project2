@@ -1,0 +1,22 @@
+{
+  "notice": "Read-only compatibility reference for uploaded snapshot; do not replace newer A/C files to match these hashes.",
+  "files": {
+    ".gitignore": "9049547abdfbf78538bcafb079bd99b6cad4dcc241df407fb28763b2fda72662",
+    "README.md": "83c1ab165e038a14420dba95552c6407710020cfe6f32470f72266aaa3289a5a",
+    "configs/augmentation.json": "4d888edb8565c10beca85ac03a3f633064694ac8f6549b8cbbdeaf6a4ec636d8",
+    "data/manifests/cats_dogs_seed42.json": "b0b348c2432c2d9238a744d78345867dcbe4a9f1836ded81bb46a49adaa2b44d",
+    "requirements-lock.txt": "66602477e74f913c75001d8b8617bc0023192f70ca9b544d228e3bf8f001dbd4",
+    "requirements.txt": "9b241109543e48f714b686d92eb6cc39b8677f3cc366c9ef29f6dd3086f5a5ba",
+    "src/__init__.py": "e1843a84a845cfe4b45ae442c4941ffa66556bfc1eac74bed037bfa25dae610d",
+    "src/augmentation.py": "ac4fc6db8514f876cee1cfed3712f66520949d1a54988dab0e1e34a79ed43902",
+    "src/common.py": "11118ad017b0b9d684b4d003ef2139b186f0c66afa0c18afe8c8fd481be2ac22",
+    "src/data.py": "5a7da2eccb76e088ad25d25680d4e984a4c3538572bd0a6f105f48f5ec3d0000",
+    "src/engine.py": "241f124afadfe2b55631a7297962e7c1bef2002ebf91aaf43f00c665611844c5",
+    "src/evaluate.py": "8d033400ec609e954d2569be6ba2d7a780c29c9f5aaaa6e093e66e42f5209314",
+    "src/inspect_data.py": "cf4e0d55895f6a918b55a5899b54501a6b557647e4d39213ae556bd6336b9804",
+    "src/models.py": "0879fa2fc1a4aff43c906d20c1bd28cf72521c7d2c02fd188736c2156c7561b7",
+    "src/plots.py": "04f5c0e3d5766d6619ca924e42e0ccd23108ccc420d125426a265c11f5f6288b",
+    "src/preview_augmentation.py": "355477c09339eb03983b2c8108be3d528ffef44661c6513fd53fafa2fe01da06",
+    "src/train.py": "0a791d76968fa8f312901e8e4c0c1723dd93eec97cc28a6f14d40805e8eba92d"
+  }
+}

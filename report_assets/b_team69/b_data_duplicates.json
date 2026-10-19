@@ -1,0 +1,32 @@
+{
+  "method": "SHA256 of raw image bytes; perceptual duplicates not checked",
+  "identical_groups": [
+    [
+      "datasets/train/cat/cat.6143.jpg",
+      "datasets/train/cat/cat.6204.jpg"
+    ],
+    [
+      "datasets/train/cat/cat.10360.jpg",
+      "datasets/train/cat/cat.3345.jpg"
+    ],
+    [
+      "datasets/train/cat/cat.2339.jpg",
+      "datasets/val/cat/cat.12408.jpg"
+    ],
+    [
+      "datasets/train/dog/dog.10797.jpg",
+      "datasets/train/dog/dog.10401.jpg",
+      "datasets/train/dog/dog.2877.jpg"
+    ],
+    [
+      "datasets/train/dog/dog.3082.jpg",
+      "datasets/train/dog/dog.2027.jpg"
+    ]
+  ],
+  "cross_split_groups": [
+    [
+      "datasets/train/cat/cat.2339.jpg",
+      "datasets/val/cat/cat.12408.jpg"
+    ]
+  ]
+}

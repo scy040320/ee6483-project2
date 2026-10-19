@@ -1,0 +1,13 @@
+{
+  "checkpoint": "/mnt/c/users/asus/.codex/.chatgpt-projects/g-p-6a894a7d5f1c81919bde1fabb24b917a/b_workspace/runs/b_b4_seed42/best_model.pt",
+  "checkpoint_sha256": "5200e968215cb11fcaa0c9dfbaedbbdf4ecc5a3b481b0c52855c276c59951fa6",
+  "checkpoint_epoch": 6,
+  "manifest_sha256": "4cb1a6c0a99bc1133941f2b9553d272775a53eb00478fd4b47fc5061a4c21104",
+  "class_to_idx": {
+    "cat": 0,
+    "dog": 1
+  },
+  "count": 500,
+  "test_accuracy": null,
+  "note": "Test set has no ground truth; predictions only"
+}

@@ -1,0 +1,132 @@
+{
+  "data_dir": "/tmp/ee6483_data/datasets",
+  "output_dir": "/mnt/c/users/asus/.codex/.chatgpt-projects/g-p-6a894a7d5f1c81919bde1fabb24b917a/b_workspace/runs/b_a1_seed42",
+  "manifest": "data/manifests/cats_dogs_seed42.json",
+  "model": "baseline_cnn",
+  "mode": "layer4",
+  "augment": true,
+  "augmentation_config": "configs/augmentation.json",
+  "epochs": 10,
+  "batch_size": 32,
+  "image_size": 128,
+  "seed": 42,
+  "lr": 0.001,
+  "backbone_lr": 0.0001,
+  "weight_decay": 0.0001,
+  "num_workers": 4,
+  "threads": 4,
+  "device": "cuda",
+  "smoke_per_class": null,
+  "num_classes": 2,
+  "dropout": 0.3,
+  "class_to_idx": {
+    "cat": 0,
+    "dog": 1
+  },
+  "manifest_sha256": "4cb1a6c0a99bc1133941f2b9553d272775a53eb00478fd4b47fc5061a4c21104",
+  "environment": {
+    "python": "3.12.3",
+    "torch": "2.14.1+cu130",
+    "torchvision": "0.29.1+cu130",
+    "numpy": "2.5.4",
+    "device": "cuda",
+    "gpu": "NVIDIA GeForce RTX 2060",
+    "cuda_runtime": "13.0"
+  },
+  "weights": null,
+  "source_sha256": {
+    "src/__init__.py": "e1843a84a845cfe4b45ae442c4941ffa66556bfc1eac74bed037bfa25dae610d",
+    "src/augmentation.py": "ac4fc6db8514f876cee1cfed3712f66520949d1a54988dab0e1e34a79ed43902",
+    "src/common.py": "11118ad017b0b9d684b4d003ef2139b186f0c66afa0c18afe8c8fd481be2ac22",
+    "src/data.py": "5a7da2eccb76e088ad25d25680d4e984a4c3538572bd0a6f105f48f5ec3d0000",
+    "src/engine.py": "241f124afadfe2b55631a7297962e7c1bef2002ebf91aaf43f00c665611844c5",
+    "src/evaluate.py": "8d033400ec609e954d2569be6ba2d7a780c29c9f5aaaa6e093e66e42f5209314",
+    "src/inspect_data.py": "cf4e0d55895f6a918b55a5899b54501a6b557647e4d39213ae556bd6336b9804",
+    "src/models.py": "0879fa2fc1a4aff43c906d20c1bd28cf72521c7d2c02fd188736c2156c7561b7",
+    "src/plots.py": "04f5c0e3d5766d6619ca924e42e0ccd23108ccc420d125426a265c11f5f6288b",
+    "src/preview_augmentation.py": "355477c09339eb03983b2c8108be3d528ffef44661c6513fd53fafa2fe01da06",
+    "src/train.py": "0a791d76968fa8f312901e8e4c0c1723dd93eec97cc28a6f14d40805e8eba92d",
+    "b_module/__init__.py": "8b81494a2825c13d310e8a40069079111c0284a3f52caf97ed5edb700582938d",
+    "b_module/compare.py": "521494353e2b163c3bd751e158a0e71bcedf453b9195212d1a40c38e58f76da3",
+    "b_module/evaluate.py": "1c86e1d4768d73921df4a1d43acbce4531fbfcf0c26a267f6b3ed49eb777c96f",
+    "b_module/model.py": "902fb595e820ca55022535f363ede271ff2a0f80bf648d3bd8166f46395da5da",
+    "b_module/predict.py": "6a0550ffc9ee6f9e9828c66589f1789fc5722790a44a835cf30544d6ac00bbb7",
+    "b_module/preflight.py": "9488d015da169a89c425b0a3526acc78929c99262a6301186e25f89b9fad24ba",
+    "b_module/submission.py": "97ec4ae3ae3e1bf01e2fe9eb234aed805a92c4e663d5ff20966a93c5a72fc3a4",
+    "b_module/train.py": "a774d4db539eebe762413fd93da70246e456fdb0e471a763de3e9c7372e01848"
+  },
+  "determinism": "fixed seeds; deterministic algorithms enabled with warn_only=True",
+  "experiment_status": "formal",
+  "selection_rule": "maximum val accuracy; ties minimum val loss",
+  "optimizer": "AdamW",
+  "scheduler": "none",
+  "preprocessing": {
+    "train": {
+      "image_size": [
+        128,
+        128
+      ],
+      "color_mode": "RGB",
+      "resize_interpolation": "bilinear",
+      "normalize_mean": [
+        0.485,
+        0.456,
+        0.406
+      ],
+      "normalize_std": [
+        0.229,
+        0.224,
+        0.225
+      ],
+      "augmentation_enabled": true,
+      "augmentation": {
+        "horizontal_flip_probability": 0.5,
+        "rotation_degrees": 15.0
+      },
+      "rotation_interpolation": "bilinear",
+      "rotation_fill_rgb": [
+        124,
+        116,
+        104
+      ],
+      "rotation_expand": false,
+      "order": [
+        "resize",
+        "random_horizontal_flip",
+        "random_rotation",
+        "to_tensor",
+        "normalize"
+      ]
+    },
+    "val": {
+      "image_size": [
+        128,
+        128
+      ],
+      "color_mode": "RGB",
+      "resize_interpolation": "bilinear",
+      "normalize_mean": [
+        0.485,
+        0.456,
+        0.406
+      ],
+      "normalize_std": [
+        0.229,
+        0.224,
+        0.225
+      ],
+      "augmentation_enabled": false,
+      "augmentation": null,
+      "rotation_interpolation": null,
+      "rotation_fill_rgb": null,
+      "rotation_expand": null,
+      "order": [
+        "resize",
+        "to_tensor",
+        "normalize"
+      ]
+    }
+  },
+  "total_parameters": 93730,
+  "trainable_parameters": 93730
+}

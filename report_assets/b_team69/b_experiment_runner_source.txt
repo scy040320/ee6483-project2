@@ -1,0 +1,62 @@
+import os,sys,subprocess,json,time
+from pathlib import Path
+ROOT=Path('/mnt/c/users/asus/.codex/.chatgpt-projects/g-p-6a894a7d5f1c81919bde1fabb24b917a/b_workspace')
+os.chdir(ROOT)
+PYTHON='/tmp/ee6483_venv/bin/python'
+DATA='/tmp/ee6483_data/datasets'
+env=os.environ.copy();env.update(TORCH_HOME='/tmp/ee6483_weights',MPLBACKEND='Agg',TQDM_DISABLE='1',OMP_NUM_THREADS='4')
+
+def run(name,extra):
+ out=ROOT/'runs'/name
+ if out.exists():raise FileExistsError(out)
+ cmd=[PYTHON,'-m','b_module.train','--data-dir',DATA,'--output-dir',str(out),'--device','cuda','--num-workers','4',*extra]
+ print('START',name,time.strftime('%H:%M:%S'),flush=True)
+ with (ROOT/'runs'/f'{name}.log').open('x') as log:
+  subprocess.run(cmd,env=env,stdout=log,stderr=subprocess.STDOUT,check=True)
+ m=json.loads((out/'metrics.json').read_text());print('DONE',name,m,flush=True)
+ return out
+
+# Wait for B1 already launched by the parent tool; no concurrent GPU training.
+while True:
+ p=ROOT/'runs/b_b1_seed42/metrics.json'
+ if p.exists():
+  m=json.loads(p.read_text())
+  if m['completed_epochs']==10:break
+ time.sleep(5)
+time.sleep(3)
+experiments=[('b_a0_seed42',['--model','baseline_cnn']),
+ ('b_a1_seed42',['--model','baseline_cnn','--augment']),
+ ('b_b0_seed42',['--mode','layer4']),
+ ('b_b2_seed42',['--mode','head','--augment'])]
+for name,args in experiments:run(name,args)
+# Tune learning rate within the better augmentation-enabled freeze strategy.
+def metric(name):return json.loads((ROOT/'runs'/name/'metrics.json').read_text())
+mode='head' if metric('b_b2_seed42')['best_val_accuracy']>metric('b_b1_seed42')['best_val_accuracy'] else 'layer4'
+run('b_b3_seed42',['--mode',mode,'--augment','--lr','0.0003','--backbone-lr','0.00003'])
+choices=['b_b1_seed42','b_b2_seed42','b_b3_seed42']
+best=max(choices,key=lambda n:(metric(n)['best_val_accuracy'],-metric(n)['best_val_loss']))
+c=json.loads((ROOT/'runs'/best/'config.json').read_text())
+args=['--mode',c['mode'],'--augment','--lr',str(c['lr']),'--backbone-lr',str(c['backbone_lr']),'--image-size','224']
+run('b_b4_seed42',args)
+# Candidate selection uses validation only, before any test inference.
+choices+=['b_b0_seed42','b_b4_seed42']
+best=max(choices,key=lambda n:(metric(n)['best_val_accuracy'],-metric(n)['best_val_loss']))
+c=json.loads((ROOT/'runs'/best/'config.json').read_text())
+selection={'selected_run':best,'rule':'validation accuracy, then loss; test not consulted','config':c,'metrics':metric(best)}
+(ROOT/'report_assets/b_selection.json').write_text(json.dumps(selection,indent=2))
+# Repeat selected model and enhanced baseline at matching size only for 128 protocol.
+# 224 winner retains separate compute/size protocol; baseline repeats remain 128 and are disclosed.
+for seed in [43,44]:
+ run(f'b_final_seed{seed}',['--mode',c['mode'],*(['--augment'] if c['augment'] else []),'--lr',str(c['lr']),
+     '--backbone-lr',str(c['backbone_lr']),'--image-size',str(c['image_size']),'--seed',str(seed)])
+ run(f'b_a1_seed{seed}',['--model','baseline_cnn','--augment','--seed',str(seed)])
+# Independent validation evaluation for every formal run; include duplicate sensitivity.
+allruns=[p for p in sorted((ROOT/'runs').iterdir()) if p.is_dir() and (p/'config.json').exists() and json.loads((p/'config.json').read_text()).get('experiment_status')=='formal']
+for out in allruns:
+ cmd=[PYTHON,'-m','b_module.evaluate','--data-dir',DATA,'--checkpoint',str(out/'best_model.pt'),'--output-dir',str(out/'evaluation'),'--device','cuda','--sensitivity-exclude','val/cat/cat.12408.jpg']
+ with (ROOT/'runs'/f'{out.name}_evaluation.log').open('x') as log:subprocess.run(cmd,env=env,stdout=log,stderr=subprocess.STDOUT,check=True)
+print('EVALUATIONS COMPLETE',flush=True)
+subprocess.run([PYTHON,'-m','b_module.compare',*[str(p) for p in allruns],'--output','report_assets/b_comparison.csv'],env=env,check=True)
+# Keep seed42 selected checkpoint for prediction; no cherry-picking across repeated seeds.
+subprocess.run([PYTHON,'-m','b_module.predict','--checkpoint',str(ROOT/'runs'/best/'best_model.pt'),'--test-dir',DATA+'/test','--sample-submission','/mnt/c/Users/ASUS/Downloads/sampleSubmission.csv','--output-dir','runs/b_final_submission','--device','cuda'],env=env,check=True)
+print('ALL COMPLETE',flush=True)

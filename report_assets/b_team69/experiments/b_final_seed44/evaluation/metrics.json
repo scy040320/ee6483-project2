@@ -1,0 +1,40 @@
+{
+  "loss": 0.0380298472650873,
+  "accuracy": 0.9886,
+  "samples": 5000,
+  "per_class": [
+    {
+      "name": "cat",
+      "precision": 0.9891870244293152,
+      "recall": 0.988,
+      "f1": 0.9885931558935361
+    },
+    {
+      "name": "dog",
+      "precision": 0.9880143827407112,
+      "recall": 0.9892,
+      "f1": 0.9886068358984609
+    }
+  ],
+  "confusion_matrix": [
+    [
+      2470,
+      30
+    ],
+    [
+      27,
+      2473
+    ]
+  ],
+  "macro_f1": 0.9885999958959986,
+  "manifest_sha256": "4cb1a6c0a99bc1133941f2b9553d272775a53eb00478fd4b47fc5061a4c21104",
+  "checkpoint_epoch": 5,
+  "reload_accuracy_verified": true,
+  "sensitivity": {
+    "excluded_paths": [
+      "val/cat/cat.12408.jpg"
+    ],
+    "samples": 4999,
+    "accuracy": 0.9885977195439087
+  }
+}

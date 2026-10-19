@@ -1,0 +1,25 @@
+START b_a0_seed42 20:44:39
+DONE b_a0_seed42 {'best_val_accuracy': 0.795, 'best_val_loss': 0.4557229263782501, 'best_epoch': 9, 'completed_epochs': 10, 'experiment_status': 'formal'}
+START b_a1_seed42 20:49:08
+DONE b_a1_seed42 {'best_val_accuracy': 0.7592, 'best_val_loss': 0.5093669695854187, 'best_epoch': 9, 'completed_epochs': 10, 'experiment_status': 'formal'}
+START b_b0_seed42 20:54:24
+DONE b_b0_seed42 {'best_val_accuracy': 0.9728, 'best_val_loss': 0.09198552923393435, 'best_epoch': 4, 'completed_epochs': 10, 'experiment_status': 'formal'}
+START b_b2_seed42 20:59:16
+DONE b_b2_seed42 {'best_val_accuracy': 0.9634, 'best_val_loss': 0.09312414654940367, 'best_epoch': 7, 'completed_epochs': 10, 'experiment_status': 'formal'}
+START b_b3_seed42 21:04:21
+DONE b_b3_seed42 {'best_val_accuracy': 0.9722, 'best_val_loss': 0.072588613178581, 'best_epoch': 5, 'completed_epochs': 10, 'experiment_status': 'formal'}
+START b_b4_seed42 21:09:46
+DONE b_b4_seed42 {'best_val_accuracy': 0.9896, 'best_val_loss': 0.04165485994955525, 'best_epoch': 6, 'completed_epochs': 10, 'experiment_status': 'formal'}
+START b_final_seed43 21:18:28
+DONE b_final_seed43 {'best_val_accuracy': 0.9888, 'best_val_loss': 0.051495683807926615, 'best_epoch': 10, 'completed_epochs': 10, 'experiment_status': 'formal'}
+START b_a1_seed43 21:27:08
+DONE b_a1_seed43 {'best_val_accuracy': 0.758, 'best_val_loss': 0.5114390941619873, 'best_epoch': 6, 'completed_epochs': 10, 'experiment_status': 'formal'}
+START b_final_seed44 21:31:49
+DONE b_final_seed44 {'best_val_accuracy': 0.9886, 'best_val_loss': 0.0380298472650873, 'best_epoch': 5, 'completed_epochs': 10, 'experiment_status': 'formal'}
+START b_a1_seed44 21:38:52
+DONE b_a1_seed44 {'best_val_accuracy': 0.7446, 'best_val_loss': 0.5219133591651917, 'best_epoch': 6, 'completed_epochs': 10, 'experiment_status': 'formal'}
+EVALUATIONS COMPLETE
+WARNING: differing seed; separate controlled groups in report
+WARNING: differing image_size; separate controlled groups in report
+runs/b_final_submission/submission.csv
+ALL COMPLETE

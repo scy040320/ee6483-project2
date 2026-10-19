@@ -1,0 +1,26 @@
+[
+  {
+    "id": "92",
+    "filename": "92.jpg",
+    "label": "0",
+    "prob_dog": "1.9799912969235375e-33"
+  },
+  {
+    "id": "4",
+    "filename": "4.jpg",
+    "label": "1",
+    "prob_dog": "1.0"
+  },
+  {
+    "id": "245",
+    "filename": "245.jpg",
+    "label": "1",
+    "prob_dog": "0.6495955586433411"
+  },
+  {
+    "id": "143",
+    "filename": "143.jpg",
+    "label": "1",
+    "prob_dog": "0.6521972417831421"
+  }
+]

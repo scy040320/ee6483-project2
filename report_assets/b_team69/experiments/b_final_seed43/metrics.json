@@ -1,0 +1,7 @@
+{
+  "best_val_accuracy": 0.9888,
+  "best_val_loss": 0.051495683807926615,
+  "best_epoch": 10,
+  "completed_epochs": 10,
+  "experiment_status": "formal"
+}
