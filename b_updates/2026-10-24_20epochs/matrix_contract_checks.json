@@ -1,0 +1,13 @@
+{
+  "matrix_configuration_verified": true,
+  "shared_manifest_environment_and_code_verified": true,
+  "runs": 5,
+  "completed_epochs": {
+    "cnn128_noaug": 20,
+    "cnn128_aug": 20,
+    "resnet128_noaug": 20,
+    "resnet128_aug": 20,
+    "resnet224_aug": 20
+  },
+  "all_training_complete": true
+}

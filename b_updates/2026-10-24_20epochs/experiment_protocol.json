@@ -1,0 +1,55 @@
+{
+  "matrix": [
+    [
+      "cnn128_noaug",
+      "baseline_cnn",
+      128,
+      false
+    ],
+    [
+      "cnn128_aug",
+      "baseline_cnn",
+      128,
+      true
+    ],
+    [
+      "resnet128_noaug",
+      "resnet18",
+      128,
+      false
+    ],
+    [
+      "resnet128_aug",
+      "resnet18",
+      128,
+      true
+    ],
+    [
+      "resnet224_aug",
+      "resnet18",
+      224,
+      true
+    ]
+  ],
+  "shared_protocol": {
+    "epochs": 20,
+    "seed": 42,
+    "batch_size": 32,
+    "optimizer": "AdamW",
+    "weight_decay": 0.0001,
+    "manifest_sha256": "4cb1a6c0a99bc1133941f2b9553d272775a53eb00478fd4b47fc5061a4c21104",
+    "train_samples": 20000,
+    "validation_samples": 5000,
+    "test_samples": 500,
+    "num_workers": 4,
+    "threads": 4
+  },
+  "selection": "maximum validation accuracy, ties minimum validation loss",
+  "no_early_stopping": true,
+  "new_training_from_scratch_optimizer": true,
+  "resnet_initialization": "official ImageNet-1K V1 backbone; fresh two-class head",
+  "test_not_used_for_selection": true,
+  "old_10epoch_runs_unchanged": true,
+  "source_doc_preserved": true,
+  "no_git_mutations": true
+}

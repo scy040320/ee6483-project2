@@ -1,0 +1,7 @@
+refs/heads/b/pretrained 45211ad9bca788bd6c23ea21f456f7792d25edcc
+refs/heads/main 136a796a68d81f3dc2eeebbcd0ef40ee03f47962
+refs/remotes/origin/HEAD 136a796a68d81f3dc2eeebbcd0ef40ee03f47962
+refs/remotes/origin/a/baseline 8b7c46070d7731e2ac12bd1b1c235291fead485d
+refs/remotes/origin/b/pretrained 45211ad9bca788bd6c23ea21f456f7792d25edcc
+refs/remotes/origin/c/cifar10 58f27be2b6551407a5e716905625738553e56797
+refs/remotes/origin/main 136a796a68d81f3dc2eeebbcd0ef40ee03f47962

@@ -1,0 +1,21 @@
+{
+  "/mnt/c/users/asus/.codex/.chatgpt-projects/g-p-6a894a7d5f1c81919bde1fabb24b917a/b_workspace/src/augmentation.py": "ac4fc6db8514f876cee1cfed3712f66520949d1a54988dab0e1e34a79ed43902",
+  "/mnt/c/users/asus/.codex/.chatgpt-projects/g-p-6a894a7d5f1c81919bde1fabb24b917a/b_workspace/src/common.py": "11118ad017b0b9d684b4d003ef2139b186f0c66afa0c18afe8c8fd481be2ac22",
+  "/mnt/c/users/asus/.codex/.chatgpt-projects/g-p-6a894a7d5f1c81919bde1fabb24b917a/b_workspace/src/data.py": "5a7da2eccb76e088ad25d25680d4e984a4c3538572bd0a6f105f48f5ec3d0000",
+  "/mnt/c/users/asus/.codex/.chatgpt-projects/g-p-6a894a7d5f1c81919bde1fabb24b917a/b_workspace/src/engine.py": "241f124afadfe2b55631a7297962e7c1bef2002ebf91aaf43f00c665611844c5",
+  "/mnt/c/users/asus/.codex/.chatgpt-projects/g-p-6a894a7d5f1c81919bde1fabb24b917a/b_workspace/src/evaluate.py": "8d033400ec609e954d2569be6ba2d7a780c29c9f5aaaa6e093e66e42f5209314",
+  "/mnt/c/users/asus/.codex/.chatgpt-projects/g-p-6a894a7d5f1c81919bde1fabb24b917a/b_workspace/src/inspect_data.py": "cf4e0d55895f6a918b55a5899b54501a6b557647e4d39213ae556bd6336b9804",
+  "/mnt/c/users/asus/.codex/.chatgpt-projects/g-p-6a894a7d5f1c81919bde1fabb24b917a/b_workspace/src/models.py": "0879fa2fc1a4aff43c906d20c1bd28cf72521c7d2c02fd188736c2156c7561b7",
+  "/mnt/c/users/asus/.codex/.chatgpt-projects/g-p-6a894a7d5f1c81919bde1fabb24b917a/b_workspace/src/plots.py": "04f5c0e3d5766d6619ca924e42e0ccd23108ccc420d125426a265c11f5f6288b",
+  "/mnt/c/users/asus/.codex/.chatgpt-projects/g-p-6a894a7d5f1c81919bde1fabb24b917a/b_workspace/src/preview_augmentation.py": "355477c09339eb03983b2c8108be3d528ffef44661c6513fd53fafa2fe01da06",
+  "/mnt/c/users/asus/.codex/.chatgpt-projects/g-p-6a894a7d5f1c81919bde1fabb24b917a/b_workspace/src/train.py": "0a791d76968fa8f312901e8e4c0c1723dd93eec97cc28a6f14d40805e8eba92d",
+  "/mnt/c/users/asus/.codex/.chatgpt-projects/g-p-6a894a7d5f1c81919bde1fabb24b917a/b_workspace/src/__init__.py": "e1843a84a845cfe4b45ae442c4941ffa66556bfc1eac74bed037bfa25dae610d",
+  "/mnt/c/users/asus/.codex/.chatgpt-projects/g-p-6a894a7d5f1c81919bde1fabb24b917a/b_workspace/b_module/compare.py": "47fc676930736fa4a74941612fa51e4a4bafda316f6edcb26e4c538314cefa14",
+  "/mnt/c/users/asus/.codex/.chatgpt-projects/g-p-6a894a7d5f1c81919bde1fabb24b917a/b_workspace/b_module/evaluate.py": "15f009c8a26e7a1167795f4a10819356b28cad566007fcfe1ae66ec640f49d76",
+  "/mnt/c/users/asus/.codex/.chatgpt-projects/g-p-6a894a7d5f1c81919bde1fabb24b917a/b_workspace/b_module/model.py": "902fb595e820ca55022535f363ede271ff2a0f80bf648d3bd8166f46395da5da",
+  "/mnt/c/users/asus/.codex/.chatgpt-projects/g-p-6a894a7d5f1c81919bde1fabb24b917a/b_workspace/b_module/predict.py": "a4bf9d6f3aec207cc2b5c2cc6b8041627d9f87e573a942ed6c9df043b182edd4",
+  "/mnt/c/users/asus/.codex/.chatgpt-projects/g-p-6a894a7d5f1c81919bde1fabb24b917a/b_workspace/b_module/preflight.py": "9488d015da169a89c425b0a3526acc78929c99262a6301186e25f89b9fad24ba",
+  "/mnt/c/users/asus/.codex/.chatgpt-projects/g-p-6a894a7d5f1c81919bde1fabb24b917a/b_workspace/b_module/submission.py": "97ec4ae3ae3e1bf01e2fe9eb234aed805a92c4e663d5ff20966a93c5a72fc3a4",
+  "/mnt/c/users/asus/.codex/.chatgpt-projects/g-p-6a894a7d5f1c81919bde1fabb24b917a/b_workspace/b_module/train.py": "a774d4db539eebe762413fd93da70246e456fdb0e471a763de3e9c7372e01848",
+  "/mnt/c/users/asus/.codex/.chatgpt-projects/g-p-6a894a7d5f1c81919bde1fabb24b917a/b_workspace/b_module/__init__.py": "8b81494a2825c13d310e8a40069079111c0284a3f52caf97ed5edb700582938d"
+}

@@ -1,0 +1,63 @@
+{
+  "selected_run": "resnet224_aug",
+  "validation": [
+    {
+      "path": "val/cat/cat.10868.jpg",
+      "label": 0,
+      "prediction": 0,
+      "confidence": 1.0,
+      "prob_cat": 1.0,
+      "prob_dog": 8.560399056278811e-10,
+      "discussion": "cat.10868.jpg is correctly classified: ground truth cat, prediction cat, predicted-class confidence 1.0000. The black cat occupies much of the image, with clear pointed ears, eyes and whiskers. These visible facial cues and the fairly simple background make this an interpretable success case."
+    },
+    {
+      "path": "val/dog/dog.1.jpg",
+      "label": 1,
+      "prediction": 1,
+      "confidence": 0.9999995231628418,
+      "prob_cat": 5.331707484401704e-07,
+      "prob_dog": 0.9999995231628418,
+      "discussion": "dog.1.jpg is correctly classified: ground truth dog, prediction dog, predicted-class confidence 1.0000. The brown dog is shown almost in full, facing the camera. Its muzzle, ears and body remain visible despite the cage bars at the side. This case shows that some background clutter can be tolerated when the animal itself is clear."
+    },
+    {
+      "path": "val/cat/cat.11565.jpg",
+      "label": 0,
+      "prediction": 1,
+      "confidence": 0.9998750686645508,
+      "prob_cat": 0.00012490943481680006,
+      "prob_dog": 0.9998750686645508,
+      "discussion": "cat.11565.jpg is misclassified: ground truth cat, prediction dog, predicted-class confidence 0.9999. This is a stylized cat graphic with the text “PHOTO UNAVAILABLE”, rather than a natural animal photograph. It is a dataset artifact and a different visual domain from most training images. The high-confidence mistake illustrates that a softmax score is not a guarantee of correctness; calibration and out-of-distribution rejection were not evaluated."
+    },
+    {
+      "path": "val/dog/dog.3970.jpg",
+      "label": 1,
+      "prediction": 0,
+      "confidence": 0.9693983197212219,
+      "prob_cat": 0.9693983197212219,
+      "prob_dog": 0.03060164675116539,
+      "discussion": "dog.3970.jpg is misclassified: ground truth dog, prediction cat, predicted-class confidence 0.9694. The small light-coloured dog has pointed ears and a relatively compact body, with a large ball beside its head. Cat-like shape cues and the nearby object may make the image ambiguous at the model input resolution. This is a plausible interpretation, not a causal explanation established by an attribution experiment."
+    }
+  ],
+  "test": [
+    {
+      "id": "92",
+      "filename": "92.jpg",
+      "label": 0,
+      "prob_dog": 1.9799912969235375e-33,
+      "confidence": 1.0,
+      "discussion": "Test ID 92 is predicted as cat, with P(dog) = 1.97999e-33. The close-up contains clear cat-like ears, whiskers and facial structure with little occlusion. The cat prediction is visually plausible. No official ground-truth label is available, so this observation is not counted as verified correct or incorrect."
+    },
+    {
+      "id": "245",
+      "filename": "245.jpg",
+      "label": 1,
+      "prob_dog": 0.6495955586433411,
+      "confidence": 0.6495955586433411,
+      "discussion": "Test ID 245 is predicted as dog, with P(dog) = 0.649596. A brown animal is partly hidden by thick white cage bars, and the face is not clearly visible. This obstructed view provides fewer reliable category cues than the close-up in ID 92. The image is useful for illustrating occlusion as a potential failure mode; its probability must not be treated as a calibrated likelihood of correctness. No official ground-truth label is available, so this observation is not counted as verified correct or incorrect."
+    }
+  ],
+  "test_label_counts": {
+    "cat": 241,
+    "dog": 259
+  }
+}

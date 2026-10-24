@@ -1,0 +1,46 @@
+[
+  {
+    "new_run": "cnn128_noaug",
+    "historical_run": "b_a0_seed42",
+    "epochs_compared": 10,
+    "maximum_absolute_difference": {
+      "train_loss": 0.0,
+      "train_accuracy": 0.0,
+      "val_loss": 0.0,
+      "val_accuracy": 0.0
+    }
+  },
+  {
+    "new_run": "cnn128_aug",
+    "historical_run": "b_a1_seed42",
+    "epochs_compared": 10,
+    "maximum_absolute_difference": {
+      "train_loss": 0.0,
+      "train_accuracy": 0.0,
+      "val_loss": 0.0,
+      "val_accuracy": 0.0
+    }
+  },
+  {
+    "new_run": "resnet128_noaug",
+    "historical_run": "b_b0_seed42",
+    "epochs_compared": 10,
+    "maximum_absolute_difference": {
+      "train_loss": 0.0,
+      "train_accuracy": 0.0,
+      "val_loss": 0.0,
+      "val_accuracy": 0.0
+    }
+  },
+  {
+    "new_run": "resnet128_aug",
+    "historical_run": "b_b1_seed42",
+    "epochs_compared": 10,
+    "maximum_absolute_difference": {
+      "train_loss": 0.0,
+      "train_accuracy": 0.0,
+      "val_loss": 0.0,
+      "val_accuracy": 0.0
+    }
+  }
+]
