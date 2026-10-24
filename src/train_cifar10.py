@@ -11,47 +11,39 @@ from src.models import build_model
 from src.engine import train_one_epoch, evaluate
 
 def get_imbalanced_indices(subset_indices, all_targets, num_classes=10, imb_ratio=0.01):
-    """
-    Creates a long-tail imbalanced distribution and returns indices along with class counts.
-    """
     class_indices = {i: [] for i in range(num_classes)}
     for idx in subset_indices:
         label = all_targets[idx]
         class_indices[label].append(idx)
         
     max_samples = max([len(indices) for indices in class_indices.values()])
-    
     imbalanced_indices = []
     class_counts = []
     
     for c in range(num_classes):
         ratio = imb_ratio ** (c / (num_classes - 1.0))
         target_count = max(1, int(max_samples * ratio))
-        
         truncated = class_indices[c][:target_count]
         imbalanced_indices.extend(truncated)
         class_counts.append(len(truncated))
         
-    print("\n--- Imbalanced Training Data Distribution ---")
-    for c, count in enumerate(class_counts):
-        print(f"Class {c}: {count} samples")
-    print("---------------------------------------------\n")
-        
     return imbalanced_indices, class_counts
 
 def main():
+    # EXPERIMENT CONFIGURATION
+    EXPERIMENT_MODE = "resampling" 
+    EPOCHS = 20
+    
     set_seed(42)
     device = resolve_device("auto")
-    
-    # Update output directory for the resampling experiment
-    output_dir = "runs/cifar10_resampling"
+    output_dir = f"runs/cifar10_{EXPERIMENT_MODE}_ep{EPOCHS}"
     os.makedirs(output_dir, exist_ok=True)
-    print(f"Using device: {device}. Results will be saved to: {output_dir}")
+    print(f"--- Running Mode: {EXPERIMENT_MODE} for {EPOCHS} Epochs ---")
+    print(f"Results will be saved to: {output_dir}")
 
     transform_train = build_transforms(image_size=32, augment=True)
     transform_test = build_transforms(image_size=32, augment=False)
     
-    print("Loading CIFAR-10 dataset...")
     full_train_dataset = CIFAR10(root="data/raw", train=True, download=True, transform=transform_train)
     test_dataset = CIFAR10(root="data/raw", train=False, download=True, transform=transform_test)
     val_dataset_raw = CIFAR10(root="data/raw", train=True, download=True, transform=transform_test)
@@ -64,70 +56,60 @@ def main():
         range(len(full_train_dataset)), [train_size, val_size], generator=generator
     )
     
-    imb_train_indices, class_counts = get_imbalanced_indices(
-        subset_indices=train_indices, 
-        all_targets=full_train_dataset.targets, 
-        num_classes=10, 
-        imb_ratio=0.01
-    )
-    
-    train_dataset = Subset(full_train_dataset, imb_train_indices)
+    # 1. Prepare Data based on Mode
+    if EXPERIMENT_MODE == "baseline":
+        active_train_indices = train_indices
+        class_counts = [len(train_indices) // 10] * 10
+    else:
+        active_train_indices, class_counts = get_imbalanced_indices(
+            subset_indices=train_indices, 
+            all_targets=full_train_dataset.targets, 
+            num_classes=10, 
+            imb_ratio=0.01
+        )
+        
+    train_dataset = Subset(full_train_dataset, active_train_indices)
     val_dataset = Subset(val_dataset_raw, val_indices)
 
-    # ---------- Method B: Data Resampling ----------
-    # 1. Calculate base weight for each class (inverse frequency)
-    class_weights = 1.0 / torch.tensor(class_counts, dtype=torch.float)
-    
-    # 2. Assign the corresponding weight to every individual sample in the subset
-    sample_weights = []
-    for idx in imb_train_indices:
-        label = full_train_dataset.targets[idx]
-        sample_weights.append(class_weights[label])
+    # 2. Configure Sampler based on Mode
+    if EXPERIMENT_MODE == "resampling":
+        class_weights = 1.0 / torch.tensor(class_counts, dtype=torch.float)
+        sample_weights = [class_weights[full_train_dataset.targets[idx]] for idx in active_train_indices]
+        sampler = WeightedRandomSampler(weights=sample_weights, num_samples=len(sample_weights), replacement=True)
+        train_loader = DataLoader(train_dataset, batch_size=64, sampler=sampler, num_workers=0)
+    else:
+        train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True, num_workers=0)
         
-    # 3. Create the sampler (replacement=True allows oversampling the minority classes)
-    sampler = WeightedRandomSampler(
-        weights=sample_weights,
-        num_samples=len(sample_weights),
-        replacement=True
-    )
-    print("Configured WeightedRandomSampler for DataLoader.")
-    
-    # 4. Apply sampler to DataLoader. Note: shuffle must be False when using a custom sampler.
-    train_loader = DataLoader(train_dataset, batch_size=64, sampler=sampler, num_workers=0)
-    # -----------------------------------------------
-    
     val_loader = DataLoader(val_dataset, batch_size=64, shuffle=False, num_workers=0)
     test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False, num_workers=0)
 
+    # 3. Configure Loss based on Mode
     model = build_model(num_classes=10).to(device)
-    
-    # Revert to standard CrossEntropyLoss for fair comparison
-    criterion = nn.CrossEntropyLoss()
+    if EXPERIMENT_MODE == "weighted_loss":
+        weights = 1.0 / torch.tensor(class_counts, dtype=torch.float)
+        weights = weights / weights.sum() * 10.0
+        criterion = nn.CrossEntropyLoss(weight=weights.to(device))
+    else:
+        criterion = nn.CrossEntropyLoss()
+        
     optimizer = optim.Adam(model.parameters(), lr=1e-3)
-
-    epochs = 10
     best_val_acc = 0.0
     
-    print(f"\n--- Starting resampling training for {epochs} epochs ---")
-    for epoch in range(1, epochs + 1):
-        print(f"\n[Epoch {epoch}/{epochs}]")
-        
+    # 4. Training Loop
+    for epoch in range(1, EPOCHS + 1):
         train_metrics = train_one_epoch(model, train_loader, criterion, optimizer, device)
         val_metrics = evaluate(model, val_loader, criterion, device)
         
-        print(f"Train -> Loss: {train_metrics['loss']:.4f}, Accuracy: {train_metrics['accuracy']:.4f}")
-        print(f"Val   -> Loss: {val_metrics['loss']:.4f}, Accuracy: {val_metrics['accuracy']:.4f}")
+        print(f"[Epoch {epoch}/{EPOCHS}] Train Acc: {train_metrics['accuracy']:.4f} | Val Acc: {val_metrics['accuracy']:.4f}")
         
         if val_metrics['accuracy'] > best_val_acc:
             best_val_acc = val_metrics['accuracy']
-            save_path = os.path.join(output_dir, "best_model.pt")
-            torch.save(model.state_dict(), save_path)
-            print(f"[*] New best validation accuracy: {best_val_acc:.4f}. Model saved!")
+            torch.save(model.state_dict(), os.path.join(output_dir, "best_model.pt"))
             
-    print("\n--- Training finished. Evaluating best model on test set ---")
+    print("\n--- Final Evaluation ---")
     model.load_state_dict(torch.load(os.path.join(output_dir, "best_model.pt")))
     test_metrics = evaluate(model, test_loader, criterion, device)
-    print(f"[Result] Final Test Accuracy (Resampling): {test_metrics['accuracy']:.4f}")
+    print(f"🎯 Final Test Accuracy ({EXPERIMENT_MODE}): {test_metrics['accuracy']:.4f}\n")
 
 if __name__ == "__main__":
     main()
